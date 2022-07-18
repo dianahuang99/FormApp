@@ -1,0 +1,71 @@
+{% extends 'base.html'  %}
+{% block title %}Home page{% endblock %}
+{% block content %}
+
+
+
+<div class="row d-flex justify-content-between">
+  <div class="col-6 align-items-center">
+    <h3>Flask App</h3>
+  </div>
+
+  <div class="col-4 d-flex justify-content-end align-items-center ">
+    <a href="/users/{{session['username']}}/feedback/add"> <button class="btn btn-success">Add a new post!</button>
+    </a>
+  </div>
+
+</div>
+
+
+
+
+
+
+<div>
+  {%if posts == []%}
+
+  <div class="card my-4">
+    <div class="card-body">
+      <p class="card-text">
+        There are no posts at the moment
+      </p>
+
+    </div>
+  </div>
+
+  {%else%}
+  {% for feedback in posts %}
+  <div class="card my-4">
+    <div class="card-body">
+      <h5 class="card-title text-info">
+        {{feedback.title}}
+        {% if session['username'] == feedback.user.username %}
+        <a style="display:inline; text-decoration: none;" href="/feedback/{{feedback.id}}/update">
+          <button class="btn btn-sm btn-success"><i class="far fa-edit"></i></button>
+        </a>
+
+
+        <form action="/feedback/{{feedback.id}}/delete" style="display:inline;" method="POST">
+          <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+        </form>
+        {% endif %}
+      </h5>
+
+      <h6 class="card-subtitle mb-2 text-muted">By
+        <a href="/users/{{feedback.user.username}}">{{feedback.user.username}}</a>
+
+      </h6>
+
+      <p class="card-text">
+        {{feedback.content}}
+      </p>
+
+    </div>
+  </div>
+
+  {%  endfor %}
+  {%endif%}
+</div>
+
+
+{% endblock %}
