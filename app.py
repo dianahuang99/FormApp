@@ -1,8 +1,8 @@
 from flask import Flask, render_template, redirect, session, flash, request
 from regex import E
 from flask_debugtoolbar import DebugToolbarExtension
-from models import connect_db, db, User, Feedback
-from forms import LoginForm, RegisterForm, FeedbackForm
+from models import connect_db, db, User, Post
+from forms import LoginForm, RegisterForm, PostForm
 from sqlalchemy.exc import IntegrityError
 import os
 import re
@@ -11,8 +11,7 @@ import re
 app = Flask(__name__)
 
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
@@ -28,7 +27,7 @@ toolbar = DebugToolbarExtension(app)
 def home_page():
     if "username" not in session:
         return redirect("/register")
-    posts = Feedback.query.all()
+    posts = Post.query.all()
     return render_template("show_posts.html", posts=posts)
 
 
@@ -98,25 +97,25 @@ def logout():
     return redirect("/")
 
 
-@app.route("/users/<username>/feedback/add", methods=["GET", "POST"])
-def show_feedback_form(username):
+@app.route("/users/<username>/post/add", methods=["GET", "POST"])
+def show_post_form(username):
     if "username" not in session:
         flash("Please log in first!", "danger")
         return redirect("/")
     user = User.query.filter_by(username=username).first()
-    form = FeedbackForm()
+    form = PostForm()
 
     if form.validate_on_submit():
         title = form.title.data
         content = form.content.data
 
-        new_feedback = Feedback(title=title, content=content, username=username)
-        db.session.add(new_feedback)
+        new_post = Post(title=title, content=content, username=username)
+        db.session.add(new_post)
         db.session.commit()
         flash("Your post was created", "success")
         return redirect(f"/users/{username}")
 
-    return render_template("new_feedback.html", user=user, form=form)
+    return render_template("new_post.html", user=user, form=form)
 
 
 @app.route("/users/<username>/delete", methods=["POST"])
@@ -136,46 +135,46 @@ def delete_user(username):
     return redirect("/")
 
 
-@app.route("/feedback/<feedback_id>/update", methods=["GET", "POST"])
-def edit_feedback_form(feedback_id):
+@app.route("/post/<post_id>/update", methods=["GET", "POST"])
+def edit_post_form(post_id):
     if "username" not in session:
         flash("Please log in first!", "danger")
         return redirect("/")
 
-    if not Feedback.query.get(feedback_id):
+    if not Post.query.get(post_id):
         flash("Post does not exist", "danger")
         return redirect(f"/users/{session['username']}")
 
-    feedback = Feedback.query.get(feedback_id)
+    post = Post.query.get(post_id)
 
-    if feedback.username != session["username"] and session["username"] != "admin":
+    if post.username != session["username"] and session["username"] != "admin":
         flash("You do not have permission to edit this post.", "danger")
         return redirect(f"/users/{session['username']}")
 
-    form = FeedbackForm(obj=feedback)
+    form = PostForm(obj=post)
 
     if form.validate_on_submit():
-        feedback.title = form.title.data
-        feedback.content = form.content.data
+        post.title = form.title.data
+        post.content = form.content.data
         db.session.commit()
         flash("Your post was edited", "success")
-        return redirect(f"/users/{feedback.username}")
+        return redirect(f"/users/{post.username}")
 
-    return render_template("edit_feedback.html", feedback=feedback, form=form)
+    return render_template("edit_post.html", post=post, form=form)
 
 
-@app.route("/feedback/<feedback_id>/delete", methods=["POST"])
-def delete_feedback(feedback_id):
+@app.route("/post/<post_id>/delete", methods=["POST"])
+def delete_post(post_id):
     if "username" not in session:
         flash("Please log in first!", "danger")
         return redirect("/")
 
-    if not Feedback.query.get(feedback_id):
+    if not Post.query.get(post_id):
         flash("Post does not exist", "danger")
         return redirect(f"/users/{session['username']}")
 
-    feedback = Feedback.query.get(feedback_id)
-    db.session.delete(feedback)
+    post = Post.query.get(post_id)
+    db.session.delete(post)
     db.session.commit()
     return redirect(request.referrer)
 
@@ -186,5 +185,5 @@ def admin_dashboard():
         flash("You do not have permissions to this page.", "danger")
         return redirect("/")
     users = User.query.all()
-    posts = Feedback.query.all()
+    posts = Post.query.all()
     return render_template("admin_dashboard.html", users=users, posts=posts)

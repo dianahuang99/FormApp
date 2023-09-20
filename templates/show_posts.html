@@ -10,7 +10,7 @@
   </div>
 
   <div class="col-4 d-flex justify-content-end align-items-center ">
-    <a href="/users/{{session['username']}}/feedback/add"> <button class="btn btn-success">Add a new post!</button>
+    <a href="/users/{{session['username']}}/post/add"> <button class="btn btn-success">Add a new post!</button>
     </a>
   </div>
 
@@ -34,30 +34,30 @@
   </div>
 
   {%else%}
-  {% for feedback in posts %}
+  {% for post in posts %}
   <div class="card my-4">
     <div class="card-body">
       <h5 class="card-title text-info">
-        {{feedback.title}}
-        {% if session['username'] == feedback.user.username or session['username'] == "admin" %}
-        <a style="display:inline; text-decoration: none;" href="/feedback/{{feedback.id}}/update">
+        {{post.title}}
+        {% if session['username'] == post.user.username or session['username'] == "admin" %}
+        <a style="display:inline; text-decoration: none;" href="/post/{{post.id}}/update">
           <button class="btn btn-sm btn-success"><i class="far fa-edit"></i></button>
         </a>
 
 
-        <form action="/feedback/{{feedback.id}}/delete" style="display:inline;" method="POST">
+        <form action="/post/{{post.id}}/delete" style="display:inline;" method="POST">
           <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
         </form>
         {% endif %}
       </h5>
 
       <h6 class="card-subtitle mb-2 text-muted">By
-        <a href="/users/{{feedback.user.username}}">{{feedback.user.username}}</a>
+        <a href="/users/{{post.user.username}}">{{post.user.username}}</a>
 
       </h6>
 
       <p class="card-text">
-        {{feedback.content}}
+        {{post.content}}
       </p>
 
     </div>

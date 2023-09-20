@@ -68,12 +68,12 @@ class User(db.Model):
         else:
             return False
 
-    feedback = db.relationship("Feedback", backref="user", cascade="all, delete-orphan")
+    posts = db.relationship("Post", backref="user", cascade="all, delete-orphan")
 
 
-class Feedback(db.Model):
+class Post(db.Model):
 
-    __tablename__ = "feedback"
+    __tablename__ = "posts"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(100), nullable=False)

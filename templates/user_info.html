@@ -36,7 +36,7 @@
 
   {% if session['username'] == user.username %}
   <div class="col-4 d-flex justify-content-end align-items-center ">
-    <a href="/users/{{user.username}}/feedback/add">
+    <a href="/users/{{user.username}}/post/add">
       <button class="btn btn-sm btn-success">Add new!</button>
     </a>
   </div>
@@ -51,7 +51,7 @@
 
 
 <div>
-  {%if user.feedback == []%}
+  {%if user.posts == []%}
 
   <div class="card my-4">
     <div class="card-body">
@@ -63,25 +63,25 @@
   </div>
 
   {%else%}
-  {% for feedback in user.feedback %}
+  {% for post in user.posts %}
   <div class="card my-4">
     <div class="card-body">
       <h5 class="card-title text-info">
-        {{feedback.title}}
-        {% if session['username'] == feedback.user.username or session['username'] == "admin"%}
-        <a style="display:inline; text-decoration: none;" href="/feedback/{{feedback.id}}/update">
+        {{post.title}}
+        {% if session['username'] == post.user.username or session['username'] == "admin"%}
+        <a style="display:inline; text-decoration: none;" href="/post/{{post.id}}/update">
           <button class="btn btn-sm btn-success"><i class="far fa-edit"></i></button>
         </a>
 
 
-        <form action="/feedback/{{feedback.id}}/delete" style="display:inline;" method="POST">
+        <form action="/post/{{post.id}}/delete" style="display:inline;" method="POST">
           <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
         </form>
         {% endif %}
       </h5>
-      <h6 class="card-subtitle mb-2 text-muted">By {{feedback.user.username}}</h6>
+      <h6 class="card-subtitle mb-2 text-muted">By {{post.user.username}}</h6>
       <p class="card-text">
-        {{feedback.content}}
+        {{post.content}}
       </p>
 
     </div>

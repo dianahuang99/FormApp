@@ -45,12 +45,12 @@
                 <td>{{ post.title }}</td>
                 <td>{{ post.content }}</td>
                 <td>
-                    <a style="display:inline; text-decoration: none;" href="/feedback/{{post.id}}/update">
+                    <a style="display:inline; text-decoration: none;" href="/post/{{post.id}}/update">
                         <button class="btn btn-sm btn-success"><i class="far fa-edit"></i></button>
                     </a>
 
 
-                    <form action="/feedback/{{post.id}}/delete" style="display:inline;" method="POST">
+                    <form action="/post/{{post.id}}/delete" style="display:inline;" method="POST">
                         <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                     </form>
                 </td>
