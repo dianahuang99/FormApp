@@ -39,7 +39,7 @@
     <div class="card-body">
       <h5 class="card-title text-info">
         {{feedback.title}}
-        {% if session['username'] == feedback.user.username %}
+        {% if session['username'] == feedback.user.username or session['username'] == "admin" %}
         <a style="display:inline; text-decoration: none;" href="/feedback/{{feedback.id}}/update">
           <button class="btn btn-sm btn-success"><i class="far fa-edit"></i></button>
         </a>

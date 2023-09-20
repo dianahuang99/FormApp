@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, session, flash
+from flask import Flask, render_template, redirect, session, flash, request
 from regex import E
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Feedback
@@ -121,11 +121,18 @@ def show_feedback_form(username):
 
 @app.route("/users/<username>/delete", methods=["POST"])
 def delete_user(username):
-    session.pop("username")
-    user = User.query.filter_by(username=username).first()
-    db.session.delete(user)
-    db.session.commit()
-    flash("User deleted", "danger")
+    if session["username"] == "admin":
+        user = User.query.filter_by(username=username).first()
+        db.session.delete(user)
+        db.session.commit()
+        flash("User deleted by admin.", "success")
+        return redirect("/admin/dashboard")
+    else:
+        session.pop("username")
+        user = User.query.filter_by(username=username).first()
+        db.session.delete(user)
+        db.session.commit()
+        flash("User deleted", "danger")
     return redirect("/")
 
 
@@ -140,6 +147,11 @@ def edit_feedback_form(feedback_id):
         return redirect(f"/users/{session['username']}")
 
     feedback = Feedback.query.get(feedback_id)
+
+    if feedback.username != session["username"] and session["username"] != "admin":
+        flash("You do not have permission to edit this post.", "danger")
+        return redirect(f"/users/{session['username']}")
+
     form = FeedbackForm(obj=feedback)
 
     if form.validate_on_submit():
@@ -165,4 +177,14 @@ def delete_feedback(feedback_id):
     feedback = Feedback.query.get(feedback_id)
     db.session.delete(feedback)
     db.session.commit()
-    return redirect(f"/users/{feedback.username}")
+    return redirect(request.referrer)
+
+# admin routes
+@app.route("/admin/dashboard")
+def admin_dashboard():
+    if session["username"] != 'admin':
+        flash("You do not have permissions to this page.", "danger")
+        return redirect("/")
+    users = User.query.all()
+    posts = Feedback.query.all()
+    return render_template("admin_dashboard.html", users=users, posts=posts)

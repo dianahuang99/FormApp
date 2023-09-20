@@ -15,7 +15,7 @@
         Email: {{user.email}}
       </p>
 
-      {% if session['username'] == user.username %}
+      {% if session['username'] == user.username or session['username'] == "admin"%}
       <form action='/users/{{user.username}}/delete' style="display:inline;" method="POST">
         <button class="btn btn-sm btn-danger">Delete Account</button>
       </form>
@@ -68,7 +68,7 @@
     <div class="card-body">
       <h5 class="card-title text-info">
         {{feedback.title}}
-        {% if session['username'] == feedback.user.username %}
+        {% if session['username'] == feedback.user.username or session['username'] == "admin"%}
         <a style="display:inline; text-decoration: none;" href="/feedback/{{feedback.id}}/update">
           <button class="btn btn-sm btn-success"><i class="far fa-edit"></i></button>
         </a>
