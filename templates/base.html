@@ -3,13 +3,13 @@
 <head>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css">
-  <title>{% block title %}title goes here{% endblock %}</title>
+  <title>{% block title %}{% endblock %}</title>
 </head>
 
 <body>
   <nav class="navbar navbar-light bg-primary justify-content-between ">
     <div class="container">
-      <a href="/" class="navbar-brand text-light">Flask</a>
+      <a href="/" class="navbar-brand text-light">Forum</a>
       <ul class="nav navbar-nav flex-row float-right">
         {% if session['username'] %}
         <li class="nav-item">
